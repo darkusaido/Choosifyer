@@ -1,0 +1,67 @@
+<head>
+  <title>Choosifyer</title>
+</head>
+ 
+<body>
+    <div class="navbar navbar-inverse navbar-static-top">
+        <div class="container-fluid">
+            <div class="navbar-header"> 
+                <div class="navbar-brand">
+                    <a href="#">Choosifyer</a>
+                </div>
+                <button type="button" class="navbar-toggle"
+                        data-toggle="collapse"
+                        data-target=".navbar-collapse">
+                    <span class="sr-only">Toggle Navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+            </div>
+            <ul class="nav navbar-nav navbar-right navbar-collapse 
+                        collapse">
+                {{#if currentUser}}
+                    <li><a href="#">Welcome {{user.username}}</a></li>
+                    <li><a class="logout" href="#">Logout</a></li>
+                {{else}}
+                    <li>{{> loginButtons}}</li> 
+                    <li><a class="logout" href="#">About</a></li>
+                {{/if}}                        
+            </ul>
+        </div>
+    </div>
+
+    {{#if currentUser}}
+    <div class="container">
+        <div class="row-fluid">
+            <header>
+                <h1>List</h1>
+                <a class="pull-right"><span class="glyphicon glyphicon-chevron-left"></span><span>&nbsp;</span>Other Lists</a>
+            <form class="new-thing">
+                <input type="text" name="text" placeholder="Type to add another item" />
+            </form>
+        </header>
+        </div>
+        <div>
+            <ul class="thingsList">
+                {{#each things}}
+                    {{> thing}}
+                {{/each}}
+            </ul>
+            <div class="well">
+                <button disabled="{{#if anySelected}}true{{/if}}" class="btn-primary choose {{#if anySelected}}disabled{{/if}}">  
+                    Choose
+                </button>
+                <button class="clear btn-info">Clear</button>
+            </div> 
+        </div>
+    </div>
+    {{/if}}
+</body>
+ 
+<template name="thing">
+    <li class="thingListItem {{#if selected}}selected{{/if}}">
+        <button class="delete">&times;</button> 
+        <span class="text">{{text}}</span>
+    </li>
+</template>
