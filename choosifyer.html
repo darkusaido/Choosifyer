@@ -49,10 +49,10 @@
                 {{/each}}
             </ul>
             <div class="well">
-                <button disabled="{{#if anySelected}}true{{/if}}" class="btn-primary choose {{#if anySelected}}disabled{{/if}}">  
+                <button disabled="{{#if anySelected}}true{{/if}}" class="choose btn btn-sm btn-primary {{#if anySelected}}disabled{{/if}}">  
                     Choose
                 </button>
-                <button class="clear btn-info">Clear</button>
+                <button class="clear btn btn-sm btn-default {{#unless anySelected}}disabled{{/unless}}">Clear</button>
             </div> 
         </div>
     </div>
