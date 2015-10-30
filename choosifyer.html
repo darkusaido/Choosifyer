@@ -62,6 +62,13 @@
 <template name="thing">
     <li class="thingListItem {{#if selected}}selected{{/if}}">
         <button class="delete">&times;</button> 
+        {{#unless beingEdited}}
+        <button class="editButton"><span class="glyphicon glyphicon-pencil"></span></button>
         <span class="text">{{text}}</span>
+        {{else}}
+        <form class="edit-thing">
+            <input type="text" name="text" value="{{text}}"/>
+        </form>
+        {{/unless}}
     </li>
 </template>

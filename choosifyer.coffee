@@ -29,18 +29,16 @@ if Meteor.isClient
                 checked: false,
                 selected: false,
                 createdAt: new Date(),
-                createdBy: Meteor.userId()
+                createdBy: Meteor.userId(),
+                beingEdited: false
             )
      
             #Clear form
             event.target.text.value = ""
         "click .clear": (event) ->
-            #Prevent default browser form submit
-            event.preventDefault();
-                
+            event.preventDefault(); 
             Meteor.call('unselectAll', Meteor.userId());
         "click .choose": (event) ->
-            #Prevent default browser form submit
             event.preventDefault()
 
             things = Things.find({createdBy: Meteor.userId()}, {sort:{text:1}});
@@ -100,8 +98,7 @@ if Meteor.isClient
             else 
                 collapsible.collapse('toggle')
         'submit .login-form': (e) ->
-            $('.collapse').collapse('hide');
-
+            $('.collapse').collapse('hide');        
     )
 
     Template.thing.events(
@@ -111,7 +108,12 @@ if Meteor.isClient
                 $set: {checked: ! this.checked}
             })
         "click .delete": () ->
-            Things.remove(this._id)
+            Meteor.call('deleteThing', this._id)
+        'click .editButton': (e) ->
+            Meteor.call('isBeingEdited', this._id)
+        'submit .edit-thing': (e) ->
+            e.preventDefault()
+            Meteor.call('editThingText', this._id, e.target.text.value)
     )
 
     Accounts.ui.config(
@@ -122,19 +124,34 @@ if Meteor.isClient
 if Meteor.isServer
     Meteor.startup(() ->
         #code to run on server at startup
-        Meteor.methods({
+        Meteor.methods(
             unselectAll: (id) ->
-                 things = Things.find({createdBy: id}, {sort:{text:1}});
+                things = Things.find({createdBy: Meteor.userId()}, {sort:{text:1}});
 
-                 things.forEach((obj) -> 
-                    Things.update(obj._id, {
-                        $set: {selected: false}
-                    })       
+                things.forEach((obj) -> 
+                    Things.update(obj._id, 
+                        $set: 
+                            selected: false
+                    )       
                 )
             toggleSelect: (element) ->
-                Things.update(element._id, {
-                    $set: {selected: element.selected}
-                })   
-        })
+                Things.update(element._id, 
+                    $set: 
+                        selected: !element.selected
+                )
+            deleteThing:  (id) ->
+                Things.remove(id) 
+            isBeingEdited:  (id) ->
+                Things.update(id, 
+                    $set: 
+                        beingEdited: true
+                )
+            editThingText: (id, newText) ->
+                Things.update(id, 
+                    $set: 
+                        text: newText
+                        beingEdited: false
+                )    
+        )
     )
 
