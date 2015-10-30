@@ -1,8 +1,6 @@
 Things = new Mongo.Collection('things')
 
-
 if Meteor.isClient 
-    #This code only runs on the client
     Template.body.helpers(
         things: () ->
             Things.find({createdBy: Meteor.userId()}, {sort:{text:1}})
@@ -11,69 +9,20 @@ if Meteor.isClient
             array = []
             things.forEach((x, index) -> array[index] = x)
             array.length > 0
-        user: () ->
-            Meteor.user()
     )
 
     Template.body.events(
         "submit .new-thing": (event) ->
-            #Prevent default browser form submit
             event.preventDefault()
-     
-            #Get value from form element
-            text = event.target.text.value
-     
-            #Insert a thing into the collection
-            Things.insert(
-                text: text,
-                checked: false,
-                selected: false,
-                createdAt: new Date(),
-                createdBy: Meteor.userId(),
-                beingEdited: false
-            )
-     
-            #Clear form
+            text = event.target.text.value                
+            Meteor.call('insertItem', text)
             event.target.text.value = ""
         "click .clear": (event) ->
             event.preventDefault(); 
-            Meteor.call('unselectAll', Meteor.userId());
+            Meteor.call('unselectAll', Meteor.userId())
         "click .choose": (event) ->
             event.preventDefault()
-
-            things = Things.find({createdBy: Meteor.userId()}, {sort:{text:1}});
-            arrayOfVictims = []
-            things.forEach((x, index) -> arrayOfVictims[index] = x)
-
-            min = arrayOfVictims.length * 4 ; max = arrayOfVictims.length * 7
-            spinLength =  Math.random() * (max - min) + min
-            prev = null
-            timeToSleep = 1000/30
-
-            selectNext = (array, index, timeOut, iterationsLeft, firstCall) ->
-                if array == null
-                    throw('Argument [array] cannot be null')
-                
-                if iterationsLeft > 0
-                    if not firstCall
-                        prevIndex =  if index is 0 then array.length - 1 else index - 1
-                        prev = array[prevIndex]
-                        Things.update(prev._id, {
-                            $set: {selected: ! prev.selected}
-                        })
-                        array[prevIndex].selected = ! prev.selected
-                    
-
-                    curr = array[index]
-                    Things.update(curr._id, {
-                        $set: {selected: ! curr.selected}
-                    })
-                    array[index].selected = ! curr.selected
-
-                    nextIndex = if index is array.length - 1  then 0 else index + 1
-                    setTimeout(selectNext, timeOut, array, nextIndex, timeOut, --iterationsLeft, false)
-                else 0
-            selectNext(arrayOfVictims, 0, timeToSleep, spinLength, true) 
+            Meteor.call('chooseItem', Meteor.userId())
         "click .logout": (e) ->
             e.stopPropagation()
             Meteor.logout()
@@ -102,11 +51,6 @@ if Meteor.isClient
     )
 
     Template.thing.events(
-        "click .toggle-checked": () ->
-            #Set the checked property to the opposite of its current value
-            Things.update(this._id, {
-                $set: {checked: ! this.checked}
-            })
         "click .delete": () ->
             Meteor.call('deleteThing', this._id)
         'click .editButton': (e) ->
@@ -123,6 +67,34 @@ if Meteor.isClient
 
 if Meteor.isServer
     Meteor.startup(() ->
+
+        selectNext = (array, index, timeOut, iterationsLeft, firstCall) ->
+            if array == null
+                throw('Argument [array] cannot be null')
+            
+            if iterationsLeft > 0
+                if not firstCall
+                    prevIndex =  if index is 0 then array.length - 1 else index - 1
+                    prev = array[prevIndex]
+                    Things.update(prev._id, {
+                        $set: {selected: ! prev.selected}
+                    })
+                    array[prevIndex].selected = ! prev.selected
+                
+
+                curr = array[index]
+                Things.update(curr._id, {
+                    $set: {selected: ! curr.selected}
+                })
+                array[index].selected = ! curr.selected
+
+                nextIndex = if index is array.length - 1  then 0 else index + 1
+                boundFunc = Meteor.bindEnvironment(
+                    (() -> selectNext(array, nextIndex, timeOut, --iterationsLeft, false)), 
+                    ((error) -> throw error)
+                )
+                setTimeout(boundFunc, timeOut)
+            else 0
         #code to run on server at startup
         Meteor.methods(
             unselectAll: (id) ->
@@ -151,7 +123,31 @@ if Meteor.isServer
                     $set: 
                         text: newText
                         beingEdited: false
-                )    
+                ) 
+            chooseItem: (userId) ->
+                things = Things.find({createdBy: userId}, {sort:{text:1}});
+                arrayOfVictims = []
+                things.forEach((x, index) -> arrayOfVictims[index] = x)
+
+                min = arrayOfVictims.length * 4 ; max = arrayOfVictims.length * 7
+                spinLength =  Math.random() * (max - min) + min
+                prev = null
+                timeToSleep = 1000/30
+                
+                boundFunc = Meteor.bindEnvironment(
+                    (() -> selectNext(arrayOfVictims, 0, timeToSleep, spinLength, true)), 
+                    ((error) -> throw error)
+                )
+                setTimeout(boundFunc, 0)  
+            insertItem: (text) ->
+                Things.insert(
+                    text: text,
+                    checked: false,
+                    selected: false,
+                    createdAt: new Date(),
+                    createdBy: Meteor.userId(),
+                    beingEdited: false
+                )
         )
     )
 

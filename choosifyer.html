@@ -21,7 +21,7 @@
             <ul class="nav navbar-nav navbar-right navbar-collapse 
                         collapse">
                 {{#if currentUser}}
-                    <li><a href="#">Welcome {{user.username}}</a></li>
+                    <li><a href="#">Welcome {{currentUser.username}}</a></li>
                     <li><a class="logout" href="#">Logout</a></li>
                 {{else}}
                     <li>{{> loginButtons}}</li> 
