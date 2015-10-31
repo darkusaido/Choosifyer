@@ -1,11 +1,13 @@
 Things = new Mongo.Collection('things')
 
 if Meteor.isClient 
+    Meteor.subscribe("things")
+
     Template.body.helpers(
         things: () ->
-            Things.find({createdBy: Meteor.userId()}, {sort:{text:1}})
+            Things.find({}, {sort:{text:1}})
         anySelected: () ->
-            things = Things.find({createdBy: Meteor.userId(), selected: true})
+            things = Things.find({selected: true})
             array = []
             things.forEach((x, index) -> array[index] = x)
             array.length > 0
@@ -66,6 +68,10 @@ if Meteor.isClient
 
 
 if Meteor.isServer
+    Meteor.publish("things", () ->
+        Things.find({createdBy: this.userId})
+    )
+
     Meteor.startup(() ->
 
         selectNext = (array, index, timeOut, iterationsLeft, firstCall) ->
@@ -95,7 +101,7 @@ if Meteor.isServer
                 )
                 setTimeout(boundFunc, timeOut)
             else 0
-        #code to run on server at startup
+
         Meteor.methods(
             unselectAll: (id) ->
                 things = Things.find({createdBy: Meteor.userId()}, {sort:{text:1}});
@@ -124,8 +130,8 @@ if Meteor.isServer
                         text: newText
                         beingEdited: false
                 ) 
-            chooseItem: (userId) ->
-                things = Things.find({createdBy: userId}, {sort:{text:1}});
+            chooseItem: () ->
+                things = Things.find({createdBy: Meteor.userId()}, {sort:{text:1}});
                 arrayOfVictims = []
                 things.forEach((x, index) -> arrayOfVictims[index] = x)
 
