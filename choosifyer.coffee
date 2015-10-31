@@ -74,7 +74,7 @@ if Meteor.isServer
 
     Meteor.startup(() ->
 
-        Meteor.methods(
+        Meteor.methods(  
             unselectAll: (id) ->
                 things = Things.find({createdBy: Meteor.userId()}, {sort:{text:1}});
 
@@ -110,7 +110,7 @@ if Meteor.isServer
                 min = arrayOfVictims.length * 4 ; max = arrayOfVictims.length * 7
                 spinLength =  Math.random() * (max - min) + min
                 prev = null
-                timeToSleep = 1000/30
+                timeToSleep = 1000/30 
                 
 
                 selectNext = (array, index, timeOut, iterationsLeft, firstCall) ->
@@ -135,9 +135,10 @@ if Meteor.isServer
 
                         nextIndex = if index is array.length - 1  then 0 else index + 1
                         
-                        Meteor.setTimeout(( () -> selectNext(array, nextIndex, timeOut, --iterationsLeft, false) ), timeOut)
+                        Meteor.setTimeout(( () -> selectNext(array, nextIndex, timeOut, --iterationsLeft, false)), timeOut)
                     else 0
                 selectNext(arrayOfVictims, 0, timeToSleep, spinLength, true)
+                this.unblock()
             insertItem: (text) ->
                 Things.insert(
                     text: text,
