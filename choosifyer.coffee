@@ -74,34 +74,6 @@ if Meteor.isServer
 
     Meteor.startup(() ->
 
-        selectNext = (array, index, timeOut, iterationsLeft, firstCall) ->
-            if array == null
-                throw('Argument [array] cannot be null')
-            
-            if iterationsLeft > 0
-                if not firstCall
-                    prevIndex =  if index is 0 then array.length - 1 else index - 1
-                    prev = array[prevIndex]
-                    Things.update(prev._id, {
-                        $set: {selected: ! prev.selected}
-                    })
-                    array[prevIndex].selected = ! prev.selected
-                
-
-                curr = array[index]
-                Things.update(curr._id, {
-                    $set: {selected: ! curr.selected}
-                })
-                array[index].selected = ! curr.selected
-
-                nextIndex = if index is array.length - 1  then 0 else index + 1
-                boundFunc = Meteor.bindEnvironment(
-                    (() -> selectNext(array, nextIndex, timeOut, --iterationsLeft, false)), 
-                    ((error) -> throw error)
-                )
-                setTimeout(boundFunc, timeOut)
-            else 0
-
         Meteor.methods(
             unselectAll: (id) ->
                 things = Things.find({createdBy: Meteor.userId()}, {sort:{text:1}});
@@ -140,11 +112,32 @@ if Meteor.isServer
                 prev = null
                 timeToSleep = 1000/30
                 
-                boundFunc = Meteor.bindEnvironment(
-                    (() -> selectNext(arrayOfVictims, 0, timeToSleep, spinLength, true)), 
-                    ((error) -> throw error)
-                )
-                setTimeout(boundFunc, 0)  
+
+                selectNext = (array, index, timeOut, iterationsLeft, firstCall) ->
+                    if array == null
+                        throw('Argument [array] cannot be null')
+                    
+                    if iterationsLeft > 0
+                        if not firstCall
+                            prevIndex =  if index is 0 then array.length - 1 else index - 1
+                            prev = array[prevIndex]
+                            Things.update(prev._id, {
+                                $set: {selected: ! prev.selected}
+                            })
+                            array[prevIndex].selected = ! prev.selected
+                        
+
+                        curr = array[index]
+                        Things.update(curr._id, {
+                            $set: {selected: ! curr.selected}
+                        })
+                        array[index].selected = ! curr.selected
+
+                        nextIndex = if index is array.length - 1  then 0 else index + 1
+                        
+                        Meteor.setTimeout(( () -> selectNext(array, nextIndex, timeOut, --iterationsLeft, false) ), timeOut)
+                    else 0
+                selectNext(arrayOfVictims, 0, timeToSleep, spinLength, true)
             insertItem: (text) ->
                 Things.insert(
                     text: text,
@@ -153,7 +146,7 @@ if Meteor.isServer
                     createdAt: new Date(),
                     createdBy: Meteor.userId(),
                     beingEdited: false
-                )
+                )       
         )
     )
 
