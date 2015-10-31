@@ -43,13 +43,13 @@ h1 {
   margin-right: 1em;
 }
 
-.new-thing {
+.new-item {
   margin-top: 10px;
   margin-bottom: -10px;
   position: relative;
 }
 
-.new-thing input {
+.new-item input {
   box-sizing: border-box;
   padding: 10px 0;
   background: transparent;
@@ -59,11 +59,11 @@ h1 {
   font-size: 1em;
 }
 
-.new-thing input:focus{
+.new-item input:focus{
   outline: 0;
 }
 
-.edit-thing input {
+.edit-item input {
   box-sizing: border-box;
   background: transparent;
   /*border: none;*/
@@ -72,11 +72,11 @@ h1 {
   margin: 0px 0px 0px 10px;
 }
 
-.edit-thing input:focus{
+.edit-item input:focus{
   outline: 0;
 }
 
-ul.thingsList{
+ul.List{
   margin: 0;
   padding: 0;
   background: white;
@@ -100,7 +100,7 @@ ul.thingsList{
   position: relative;
 }
 
-li.thingListItem{
+li.list-item{
   position: relative;
   list-style: none;
   padding: 10px;
@@ -118,7 +118,7 @@ li.selected {
 
 
 @media (max-width: 600px) {
-  li .thingListItem{
+  li .list-item{
     padding: 12px 15px;
   }
 
@@ -127,7 +127,7 @@ li.selected {
     clear: both;
   }
 
-  .new-thing input {
+  .new-listItem input {
     padding-bottom: 5px;
   }
 }

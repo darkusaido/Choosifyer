@@ -1,20 +1,20 @@
-Things = new Mongo.Collection('things')
+ListItems = new Mongo.Collection('listItems')
 
 if Meteor.isClient 
-    Meteor.subscribe("things")
+    Meteor.subscribe("listItems")
 
     Template.body.helpers(
-        things: () ->
-            Things.find({}, {sort:{text:1}})
+        items: () ->
+            ListItems.find({}, {sort:{text:1}})
         anySelected: () ->
-            things = Things.find({selected: true})
+            items = ListItems.find({selected: true})
             array = []
-            things.forEach((x, index) -> array[index] = x)
+            items.forEach((x, index) -> array[index] = x)
             array.length > 0
     )
 
     Template.body.events(
-        "submit .new-thing": (event) ->
+        "submit .new-item": (event) ->
             event.preventDefault()
             text = event.target.text.value                
             Meteor.call('insertItem', text)
@@ -52,14 +52,14 @@ if Meteor.isClient
             $('.collapse').collapse('hide');        
     )
 
-    Template.thing.events(
+    Template.item.events(
         "click .delete": () ->
-            Meteor.call('deleteThing', this._id)
+            Meteor.call('deleteItem', this._id)
         'click .editButton': (e) ->
             Meteor.call('isBeingEdited', this._id)
-        'submit .edit-thing': (e) ->
+        'submit .edit-item': (e) ->
             e.preventDefault()
-            Meteor.call('editThingText', this._id, e.target.text.value)
+            Meteor.call('editItemText', this._id, e.target.text.value)
     )
 
     Accounts.ui.config(
@@ -68,46 +68,46 @@ if Meteor.isClient
 
 
 if Meteor.isServer
-    Meteor.publish("things", () ->
-        Things.find({createdBy: this.userId})
+    Meteor.publish("listItems", () ->
+        ListItems.find({createdBy: this.userId})
     )
 
     Meteor.startup(() ->
 
         Meteor.methods(  
             unselectAll: (id) ->
-                things = Things.find({createdBy: Meteor.userId()}, {sort:{text:1}});
+                items = ListItems.find({createdBy: this.userId}, {sort:{text:1}});
 
-                things.forEach((obj) -> 
-                    Things.update(obj._id, 
+                items.forEach((obj) -> 
+                    ListItems.update(obj._id, 
                         $set: 
                             selected: false
                     )       
                 )
             toggleSelect: (element) ->
-                Things.update(element._id, 
+                ListItems.update(element._id, 
                     $set: 
                         selected: !element.selected
                 )
-            deleteThing:  (id) ->
-                Things.remove(id) 
+            deleteItem:  (id) ->
+                ListItems.remove(id) 
             isBeingEdited:  (id) ->
-                Things.update(id, 
+                ListItems.update(id, 
                     $set: 
                         beingEdited: true
                 )
-            editThingText: (id, newText) ->
-                Things.update(id, 
+            editItemText: (id, newText) ->
+                ListItems.update(id, 
                     $set: 
                         text: newText
                         beingEdited: false
                 ) 
             chooseItem: () ->
-                things = Things.find({createdBy: Meteor.userId()}, {sort:{text:1}});
-                arrayOfVictims = []
-                things.forEach((x, index) -> arrayOfVictims[index] = x)
+                items = ListItems.find({createdBy: this.userId}, {sort:{text:1}});
+                arrayOfChoices = []
+                items.forEach((x, index) -> arrayOfChoices[index] = x)
 
-                min = arrayOfVictims.length * 4 ; max = arrayOfVictims.length * 7
+                min = arrayOfChoices.length * 4 ; max = arrayOfChoices.length * 7
                 spinLength =  Math.random() * (max - min) + min
                 prev = null
                 timeToSleep = 1000/30 
@@ -121,14 +121,14 @@ if Meteor.isServer
                         if not firstCall
                             prevIndex =  if index is 0 then array.length - 1 else index - 1
                             prev = array[prevIndex]
-                            Things.update(prev._id, {
+                            ListItems.update(prev._id, {
                                 $set: {selected: ! prev.selected}
                             })
                             array[prevIndex].selected = ! prev.selected
                         
 
                         curr = array[index]
-                        Things.update(curr._id, {
+                        ListItems.update(curr._id, {
                             $set: {selected: ! curr.selected}
                         })
                         array[index].selected = ! curr.selected
@@ -137,15 +137,15 @@ if Meteor.isServer
                         
                         Meteor.setTimeout(( () -> selectNext(array, nextIndex, timeOut, --iterationsLeft, false)), timeOut)
                     else 0
-                selectNext(arrayOfVictims, 0, timeToSleep, spinLength, true)
+                selectNext(arrayOfChoices, 0, timeToSleep, spinLength, true)
                 this.unblock()
             insertItem: (text) ->
-                Things.insert(
+                ListItems.insert(
                     text: text,
                     checked: false,
                     selected: false,
                     createdAt: new Date(),
-                    createdBy: Meteor.userId(),
+                    createdBy: this.userId,
                     beingEdited: false
                 )       
         )
