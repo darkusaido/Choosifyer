@@ -21,3 +21,4 @@ accounts-ui
 accounts-password
 twbs:bootstrap
 iron:router
+pcel:loading

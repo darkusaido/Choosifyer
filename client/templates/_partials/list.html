@@ -1,0 +1,24 @@
+<template name="list">
+    <div class="row-fluid">
+        <header>
+            <h1>List</h1>
+            <a class="pull-right"><span class="glyphicon glyphicon-chevron-left"></span><span>&nbsp;</span>Other Lists</a>
+        <form class="new-item">
+            <input type="text" name="text" placeholder="Type to add another item" />
+        </form>
+    </header>
+    </div>
+    <div>
+        <ul class="List">
+            {{#each items}}
+                {{> item}}
+            {{/each}}
+        </ul>
+        <div class="well">
+            <button disabled="{{#if anySelected}}true{{/if}}" class="choose btn btn-sm btn-primary {{#if anySelected}}disabled{{/if}}">  
+                Choose
+            </button>
+            <button class="clear btn btn-sm btn-default {{#unless anySelected}}disabled{{/unless}}">Clear</button>
+        </div> 
+    </div>
+</template>

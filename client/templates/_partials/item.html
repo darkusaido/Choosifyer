@@ -1,0 +1,13 @@
+<template name="item">
+    <li class="list-item {{#if selected}}selected{{/if}}">
+        <button class="delete">&times;</button> 
+        {{#unless beingEdited}}
+        <button class="editButton"><span class="glyphicon glyphicon-pencil"></span></button>
+        <span class="text">{{text}}</span>
+        {{else}}
+        <form class="edit-item">
+            <input type="text" name="text" value="{{text}}"/>
+        </form>
+        {{/unless}}
+    </li>
+</template>
