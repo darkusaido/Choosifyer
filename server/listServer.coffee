@@ -41,7 +41,7 @@ Meteor.startup(() ->
             min = arrayOfChoices.length * 4 ; max = arrayOfChoices.length * 7
             spinLength =  Math.random() * (max - min) + min
             prev = null
-            timeToSleep = 1000/30 
+            timeToSleep = 1000/20 
             
 
             selectNext = (array, index, timeOut, iterationsLeft, firstCall) ->
