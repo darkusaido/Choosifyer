@@ -1,13 +1,10 @@
-ListItems = new Mongo.Collection "listItems"
+Lists = share.Lists
+ListItems = share.ListItems
 
-Meteor.startup(() ->
-    Meteor.publish("listItems", () ->
-        ListItems.find({createdBy: this.userId})
-    )
-    
+Meteor.startup(() ->    
     Meteor.methods(  
-        unselectAll: (id) ->
-            items = ListItems.find({createdBy: this.userId}, {sort:{text:1}});
+        unselectAll: (listId) ->
+            items = ListItems.find({createdBy: this.userId, listId: listId}, {sort:{text:1}});
 
             items.forEach((obj) -> 
                 ListItems.update(obj._id, 
@@ -33,8 +30,8 @@ Meteor.startup(() ->
                     text: newText
                     beingEdited: false
             ) 
-        chooseItem: () ->
-            items = ListItems.find({createdBy: this.userId}, {sort:{text:1}});
+        chooseItem: (listId) ->
+            items = ListItems.find({createdBy: this.userId, listId: listId}, {sort:{text:1}});
             arrayOfChoices = []
             items.forEach((x, index) -> arrayOfChoices[index] = x)
 
@@ -70,14 +67,15 @@ Meteor.startup(() ->
                 else 0
             selectNext(arrayOfChoices, 0, timeToSleep, spinLength, true)
             this.unblock()
-        insertItem: (text) ->
+        insertItem: (text, listId) ->
             ListItems.insert(
                 text: text,
                 checked: false,
                 selected: false,
                 createdAt: new Date(),
                 createdBy: this.userId,
-                beingEdited: false
+                beingEdited: false,
+                listId: listId
             )       
     )
 )

@@ -43,13 +43,13 @@ h1 {
   margin-right: 1em;
 }
 
-.new-item {
+.new-item, .new-list{
   margin-top: 10px;
   margin-bottom: -10px;
   position: relative;
 }
 
-.new-item input {
+.new-item input, .new-list input{
   box-sizing: border-box;
   padding: 10px 0;
   background: transparent;
@@ -59,7 +59,7 @@ h1 {
   font-size: 1em;
 }
 
-.new-item input:focus{
+.new-item input:focus, .new-list input:focus{
   outline: 0;
 }
 
@@ -100,7 +100,7 @@ ul.List{
   position: relative;
 }
 
-li.list-item{
+li.list-item, li.list-list-item{
   position: relative;
   list-style: none;
   padding: 10px;
@@ -118,7 +118,7 @@ li.selected {
 
 
 @media (max-width: 600px) {
-  li .list-item{
+  li .list-item, li .list-list-item{
     padding: 12px 15px;
   }
 

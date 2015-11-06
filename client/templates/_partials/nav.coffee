@@ -1,6 +1,6 @@
 Template.nav.events(
     "click .logout": (e) ->
-        e.stopPropagation()
+        e.preventDefault()
         Meteor.logout()
         $('.collapse').collapse('hide')
         Router.go('/')

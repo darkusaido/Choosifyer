@@ -1,0 +1,20 @@
+<template name="listAll">
+    <div class="row-fluid">
+        <header>
+            <h1>List of lists</h1>
+            <form class="new-list">
+                <input type="text" name="title" placeholder="Type to add another list" />
+            </form>
+        </header>
+    </div>
+    <div>
+        <ul class="List">
+            {{#each lists}}
+                {{> list}}
+            {{/each}}
+        </ul>
+<!--         <div class="well">
+            <button class="btn btn-lg btn-success"><span class="glyphicon glyphicon-plus"></span> Add List</button>
+        </div>  -->
+    </div>
+</template>

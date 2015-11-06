@@ -3,5 +3,5 @@ Accounts.ui.config(
 )
 
 Accounts.onLogin( () ->
-	Router.go('/' + Meteor.user().username)
+	Router.go('/user/' + Meteor.user().username)
 )
