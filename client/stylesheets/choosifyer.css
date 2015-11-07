@@ -35,7 +35,7 @@ header {
   display: block;
 }
 
-h1 {
+h1.list-title{
   font-size: 1.5em;
   margin: 0;
   margin-bottom: 10px;
@@ -187,3 +187,9 @@ button{
 .invisible{
   visibility: 'hidden';
 }
+
+
+/*home/404 template styles*/
+.error-template, .home-template {padding: 40px 15px;text-align: center;}
+.error-actions, .home-actions {margin-top:15px;margin-bottom:15px;}
+p.list-paragraph{margin: 0px;}

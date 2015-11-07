@@ -1,7 +1,7 @@
 <template name="listShow">
     <div class="row-fluid">
         <header>
-            <h1>{{list.title}}</h1>
+            <h1 class="list-title">{{list.title}}</h1>
             <a id="other-lists-link" class="pull-right" href="/user/{{currentUser.username}}"><span class="glyphicon glyphicon-chevron-left"></span><span>&nbsp;</span>Other Lists</a>
             <form class="new-item">
                 <input type="text" name="text" placeholder="Type to add another item" />
@@ -15,7 +15,7 @@
             {{/each}}
         </ul>
         <div class="well">
-            <button disabled="{{#if anySelected}}true{{/if}}" class="choose btn btn-sm btn-primary {{#if anySelected}}disabled{{/if}}">  
+            <button disabled="{{#if anySelected}}true{{/if}}" class="choose btn btn-sm btn-primary {{#if anySelected}}disabled{{/if}}"> 
                 Choose
             </button>
             <button class="clear btn btn-sm btn-default {{#unless anySelected}}disabled{{/unless}}">Clear</button>
