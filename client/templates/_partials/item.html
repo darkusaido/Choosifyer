@@ -1,8 +1,12 @@
 <template name="item">
     <li class="list-item {{#if selected}}selected{{/if}}">
+        {{#if isOwner}}
         <button class="delete">&times;</button> 
+        {{/if}}
         {{#unless beingEdited}}
-        <button class="editButton"><span class="glyphicon glyphicon-pencil"></span></button>
+            {{#if isOwner}}
+            <button class="editButton"><span class="glyphicon glyphicon-pencil"></span></button>
+            {{/if}}
         <span class="text">{{text}}</span>
         {{else}}
         <form class="edit-item">

@@ -1,6 +1,7 @@
 Lists = share.Lists
 ListItems = share.ListItems
 listId = ''
+creatorId = ''
 
 Template.listShow.helpers(
     items: () ->
@@ -13,7 +14,10 @@ Template.listShow.helpers(
     list: () ->
         list = Lists.findOne()
         listId = list._id
+        creatorId = list.createdBy
         list
+    isOwner: () ->
+        Meteor.userId() is creatorId
 )
 
 Template.listShow.events(

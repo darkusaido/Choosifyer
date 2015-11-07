@@ -2,10 +2,12 @@
     <div class="row-fluid">
         <header>
             <h1 class="list-title">{{list.title}}</h1>
+            {{#if isOwner}}
             <a id="other-lists-link" class="pull-right" href="/user/{{currentUser.username}}"><span class="glyphicon glyphicon-chevron-left"></span><span>&nbsp;</span>Other Lists</a>
             <form class="new-item">
                 <input type="text" name="text" placeholder="Type to add another item" />
             </form>
+            {{/if}}
         </header>
     </div>
     <div>

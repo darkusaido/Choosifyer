@@ -4,7 +4,7 @@ ListItems = share.ListItems
 Meteor.startup(() ->    
     Meteor.methods(  
         unselectAll: (listId) ->
-            items = ListItems.find({createdBy: this.userId, listId: listId}, {sort:{text:1}});
+            items = ListItems.find({listId: listId}, {sort:{text:1}});
 
             items.forEach((obj) -> 
                 ListItems.update(obj._id, 
@@ -31,11 +31,11 @@ Meteor.startup(() ->
                     beingEdited: false
             ) 
         chooseItem: (listId) ->
-            items = ListItems.find({createdBy: this.userId, listId: listId}, {sort:{text:1}});
+            items = ListItems.find({listId: listId}, {sort:{text:1}});
             arrayOfChoices = []
             items.forEach((x, index) -> arrayOfChoices[index] = x)
 
-            min = arrayOfChoices.length * 4 ; max = arrayOfChoices.length * 7
+            min = arrayOfChoices.length * 2 ; max = arrayOfChoices.length * 4
             spinLength =  Math.random() * (max - min) + min
             prev = null
             timeToSleep = 1000/5 
@@ -73,7 +73,6 @@ Meteor.startup(() ->
                 checked: false,
                 selected: false,
                 createdAt: new Date(),
-                createdBy: this.userId,
                 beingEdited: false,
                 listId: listId
             )       
